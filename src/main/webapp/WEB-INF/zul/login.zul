@@ -1,0 +1,31 @@
+<zk>
+	<window title="Login" border="normal" width="500px" mode="modal"
+		apply="org.zkoss.bind.BindComposer" onOK="@command('submit')" onCancel="@command('clear')"
+		viewModel="@id('ctrl') @init('org.zkoss.zkmvc.core.SpringMVCViewModel')">
+		<grid>
+			<columns>
+				<column />
+				<column />
+			</columns>
+			<rows>
+				<row>
+					Name:
+					<textbox value="@bind(ctrl.loginForm.name)" />
+				</row>
+				<row>
+					Password:
+					<textbox type="password" value="@bind(ctrl.loginForm.password)" />
+				</row>
+				<row>
+					<cell colspan="2">
+						<label value="@bind(ctrl.loginMsg)"/>
+					</cell>
+				</row>
+			</rows>
+		</grid>
+		<toolbar>
+			<button label="Clear" onClick="@command('clear')"/>
+			<button label="Login" onClick="@command('submit')"/>
+		</toolbar>
+	</window>
+</zk>
