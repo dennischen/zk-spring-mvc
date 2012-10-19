@@ -185,7 +185,7 @@ public class SpringMVCViewModel implements Map<String, Object>{
 			throw new RuntimeException("command request "+commandPath+" error, error code="+res.getError()+",message="+res.getErrorMessage());
 		}
 		
-		System.out.println(">>>"+res.getError());
+		
 		Map<String, ?> model = (Map<String, ?>)req.getPayload(CommandRequest.PAYLOAD_MODEL_MAP);
 		if(model==null){
 			throw new RuntimeException("model map not found for command path "+commandPath+", error ");

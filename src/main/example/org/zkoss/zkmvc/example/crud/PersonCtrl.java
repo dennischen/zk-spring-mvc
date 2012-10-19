@@ -25,6 +25,7 @@ public class PersonCtrl {
 	@RequestMapping("/save")
 	public void save(@ViewModelAttribute Person selectedPerson, ModelMap model) {
 		dao.save(selectedPerson);
+		
 		model.put("selectedPerson", selectedPerson);
 		model.put("peopleList", dao.query());
 	}
@@ -36,6 +37,7 @@ public class PersonCtrl {
 			throw new RuntimeException("selectedPerson not found");
 		}
 		dao.delete(selectedPerson);
+		
 		model.put("selectedPerson", null);// to clean selection
 		model.put("peopleList", dao.query());
 	}
