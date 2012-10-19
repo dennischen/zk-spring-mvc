@@ -1,0 +1,5 @@
+<zk>
+	<window title="ZK MVC Hello" border="normal">
+		<label value="${message}"/>
+	</window>
+</zk>

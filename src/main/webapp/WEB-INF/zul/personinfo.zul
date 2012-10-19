@@ -1,0 +1,24 @@
+<zk>
+	<window id="win" title="@bind(ctrl.popupinfo)" border="normal" width="400px"
+		mode="modal">
+		<grid>
+			<columns>
+				<column />
+				<column />
+			</columns>
+			<rows>
+				<row>
+					First Name:
+					<label value="@bind(ctrl.selectedPerson.firstName)" />
+				</row>
+				<row>
+					Last Name:
+					<label value="@bind(ctrl.selectedPerson.lastName)" />
+				</row>
+			</rows>
+		</grid>
+		<toolbar>
+			<button label="Close" onClick="@command('detachComponent',component=win)"/>
+		</toolbar>
+	</window>
+</zk>

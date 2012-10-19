@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Specification-Title: zkcache
+Specification-Version: 0.0.1-SNAPSHOT
+Implementation-Title: zkforge.zkcache
+Implementation-Version: 0.0.1-SNAPSHOT

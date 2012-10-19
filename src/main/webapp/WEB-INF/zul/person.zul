@@ -1,0 +1,52 @@
+<zk>
+	<window title="ZK MVC Person CRUD" border="normal" width="500px"
+		apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('ctrl') @init('org.zkoss.zkmvc.core.SpringMVCViewModel')">
+		<vlayout>
+			<listbox selectedItem="@bind(ctrl.selectedPerson)" rows="5"
+				model="@bind(ctrl.peopleList)">
+				<listhead>
+					<listheader label="First Name" />
+					<listheader label="Last Name" />
+				</listhead>
+				<template name="model">
+					<listitem>
+						<listcell label="@bind(each.firstName)" />
+						<listcell label="@bind(each.lastName)" />
+					</listitem>
+				</template>
+			</listbox>
+			<div height="70px">
+				<grid visible="@bind(not empty ctrl.selectedPerson)"
+					form="@id('fx') @load(ctrl.selectedPerson) @save(ctrl.selectedPerson,before='save')">
+					<columns>
+						<column />
+						<column />
+					</columns>
+					<rows>
+						<row>
+							First Name:
+							<textbox
+								value="@bind(fx.firstName)" />
+						</row>
+						<row>
+							Last Name:
+							<textbox
+								value="@bind(fx.lastName)" />
+						</row>
+					</rows>
+				</grid>
+			</div>
+			<hlayout>
+				<button label="New" onClick="@command('new')"/>
+				<button label="Save" onClick="@command('save')" visible="@bind(not empty ctrl.selectedPerson)" />
+				<button label="Delete" onClick="@command('delete')" visible="@bind(not empty ctrl.selectedPerson)" />
+			</hlayout>
+			<toolbar>
+				<button label="redirect" onClick="@command('redirect',path='/welcome')"/>
+				<button label="redirect2" onClick="@command('redirect',path='/welcome/dennis')"/>
+				<button label="popup" onClick="@command('popup',zul='personinfo.zul')"/>
+			</toolbar>
+		</vlayout>
+	</window>
+</zk>

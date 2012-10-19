@@ -1,0 +1,23 @@
+<zk>
+	<window title="ZK MVC Hello" border="normal" apply="org.zkoss.bind.BindComposer" 
+	viewModel="@id('vm') @init('org.zkoss.zkmvc.core.SpringMVCViewModel')">
+		<hlayout hflex="1">
+			Message : 
+			<label value="@bind(vm.message)"/>
+		</hlayout>
+		<hlayout hflex="1">
+			Message : 
+			<textbox id="tb" value="@bind(vm.message)" hflex="1" />
+		</hlayout>
+		<hlayout hflex="1">
+			Message from Component : 
+			<textbox id="tb2" value='from component'  hflex="1" />
+		</hlayout>
+		<button label="set" onClick="@command('set')"/>
+		<button label="From VM implicit" onClick="@command('set2')"/>
+		<button label="From VM" onClick="@command('set2',message='from vm:'.concat(vm.message))"/>
+		<button label="Static set" onClick="@command('set2',message='from static')"/>
+		<button label="From component" onClick="@command('set2',message=tb2.value)"/>
+		
+	</window>
+</zk>
