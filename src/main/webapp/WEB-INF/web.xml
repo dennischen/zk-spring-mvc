@@ -179,6 +179,9 @@ Copyright (C) 2004 Potix Corporation. All Rights Reserved.
 		<servlet-name>mvc-dispatcher</servlet-name>
 	</filter-mapping> 
  
+ 	<listener>
+    	<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>

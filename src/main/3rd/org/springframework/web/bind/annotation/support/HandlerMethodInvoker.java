@@ -80,7 +80,9 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
+import org.zkoss.zkmvc.core.ViewModelMap;
 import org.zkoss.zkmvc.core.annotation.RequestAttribute;
+import org.zkoss.zkmvc.core.annotation.ViewModelAttribute;
 
 /**
  * Support class for invoking an annotated handler method. Operates on the introspection results of a {@link
@@ -257,6 +259,7 @@ public class HandlerMethodInvoker {
 			int annotationsFound = 0;
 			
 			String reqAttrName = null;
+			String vmAttrName = null;
 			
 			Annotation[] paramAnns = methodParam.getParameterAnnotations();
 
@@ -273,6 +276,13 @@ public class HandlerMethodInvoker {
 					reqAttrName = requestAttr.value();
 					required = requestAttr.required();
 					defaultValue = parseDefaultValueAttribute(requestAttr.defaultValue());
+					annotationsFound++;
+				}
+				else if (ViewModelAttribute.class.isInstance(paramAnn)) {
+					ViewModelAttribute vmAttr = (ViewModelAttribute) paramAnn;
+					vmAttrName = vmAttr.value();
+					required = vmAttr.required();
+					defaultValue = parseDefaultValueAttribute(vmAttr.defaultValue());
 					annotationsFound++;
 				}
 				else if (RequestHeader.class.isInstance(paramAnn)) {
@@ -360,6 +370,9 @@ public class HandlerMethodInvoker {
 			}
 			else if (reqAttrName != null) {
 				args[i] = resolveRequestAttr(reqAttrName, required, defaultValue, methodParam, webRequest, handler);
+			}
+			else if (vmAttrName != null) {
+				args[i] = resolveViewModelAttr(vmAttrName, required, defaultValue, methodParam, webRequest, handler);
 			}
 			else if (headerName != null) {
 				args[i] = resolveRequestHeader(headerName, required, defaultValue, methodParam, webRequest, handler);
@@ -551,6 +564,43 @@ public class HandlerMethodInvoker {
 //		}
 		if (attrValue == null) {
 			attrValue = webRequest.getAttribute(attrName, WebRequest.SCOPE_REQUEST);
+		}
+		if (attrValue == null) {
+			if (defaultValue != null) {
+				attrValue = resolveDefaultValue(defaultValue);
+			}
+			else if (required) {
+				raiseMissingParameterException(attrName, paramType);
+			}
+			attrValue = checkValue(attrName, attrValue, paramType);
+		}
+		WebDataBinder binder = createBinder(webRequest, null, attrName);
+		initBinder(handlerForInitBinderCall, attrName, binder, webRequest);
+		return binder.convertIfNecessary(attrValue, paramType, methodParam);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Object resolveViewModelAttr(String attrName, boolean required, String defaultValue,
+			MethodParameter methodParam, NativeWebRequest webRequest, Object handlerForInitBinderCall)
+			throws Exception {
+		
+		Class<?> paramType = methodParam.getParameterType();
+//		if (Map.class.isAssignableFrom(paramType) && attrName.length() == 0) {
+//			return resolveRequestAttrMap((Class<? extends Map>) paramType, webRequest);
+//		}
+		if (attrName.length() == 0) {
+			attrName = getRequiredParameterName(methodParam);
+		}
+		Object attrValue = null;
+//		MultipartRequest multipartRequest = webRequest.getNativeRequest(MultipartRequest.class);
+//		if (multipartRequest != null) {
+//			List<MultipartFile> files = multipartRequest.getFiles(paramName);
+//			if (!files.isEmpty()) {
+//				paramValue = (files.size() == 1 ? files.get(0) : files);
+//			}
+//		}
+		if (attrValue == null) {
+			attrValue = ViewModelMap.instance().get(attrName);
 		}
 		if (attrValue == null) {
 			if (defaultValue != null) {

@@ -7,7 +7,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.zkoss.zkmvc.core.annotation.RequestAttribute;
+import org.zkoss.zkmvc.core.annotation.ViewModelAttribute;
  
 @Controller
 @RequestMapping("/bean")
@@ -25,7 +25,7 @@ public class BeanCtrl{
 	}
 	
 	@RequestMapping(value="/set2")
-	public void set(@RequestAttribute(required=false) String message, ModelMap model) {
+	public void set(@ViewModelAttribute(required=false) String message, ModelMap model) {
 		model.addAttribute("message", "Act ["+message+"]:["+new Date()+"]");
 	}
 	

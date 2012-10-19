@@ -2,7 +2,6 @@ package org.zkoss.zkmvc.core;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,13 +19,15 @@ import org.zkoss.bind.annotation.ContextType;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.impl.BindContextImpl;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 
 public class SpringMVCViewModel implements Map<String, Object>{
 	protected Map<String,Object> internalModel = new HashMap<String, Object>();
-	String basePath;
+	protected String basePath;
+	
+	private boolean applyRequestAttr = false; 
+	
 	@Init
 	public void init(@ContextParam(ContextType.BIND_CONTEXT) BindContext ctx){
 		basePath = (String)Executions.getCurrent().getAttribute(RequestKeys.BASE_PATH);
@@ -109,7 +110,7 @@ public class SpringMVCViewModel implements Map<String, Object>{
 		throw new UnsupportedOperationException();
 	}
 	
-	/** utitity method */
+	/** utility method */
 	@Command
 	public void detachComponent(@BindingParam("component")Component comp) throws Exception {
 		comp.detach();
@@ -117,30 +118,44 @@ public class SpringMVCViewModel implements Map<String, Object>{
 	
 	@Command("*")
 	public void invokeCommand(@ContextParam(ContextType.BIND_CONTEXT) BindContext ctx) throws Exception {
-		String command = ctx.getCommandName();
-		Map<String,Object> bindArgs = (Map<String,Object>)ctx.getAttribute(BindContextImpl.COMMAND_ARGS);
+		final String command = ctx.getCommandName();
+		
+		final Map<String,Object> innerViewModelMap = new HashMap<String,Object>();
+		
+		final Map<String,Object> bindArgs = (Map<String,Object>)ctx.getAttribute(BindContextImpl.COMMAND_ARGS);
 		
 		//copy implement in DispatcherServlet
-		Execution exe = Executions.getCurrent();
-		HttpServletRequest request = (HttpServletRequest)exe.getNativeRequest();
-		HttpServletResponse response = (HttpServletResponse)exe.getNativeResponse();
+		final Execution exe = Executions.getCurrent();
+		final HttpServletRequest request = (HttpServletRequest)exe.getNativeRequest();
+		final HttpServletResponse response = (HttpServletResponse)exe.getNativeResponse();
 		
-		RequestDispatcher reqd = request.getRequestDispatcher(basePath+"/"+command);
+		final String commandPath = basePath+"/"+command;
+		final RequestDispatcher reqd = request.getRequestDispatcher(commandPath);
+		final CommandRequest req = new CommandRequest(request);
+		final CommandResponse res = new CommandResponse(response);
 		
-		CommandRequest req = new CommandRequest(request);
-		req.setAttribute(CommandRequest.ATTR_CMD_REQUEST, req);
+		req.setAttribute(CommandRequest.ATTR_CMD_REQUEST, req);		
 		
-		HttpServletResponseWrapper res = new HttpServletResponseWrapper(response);
 		
 		for(Map.Entry<String, Object> en:internalModel.entrySet()){
-			req.setAttribute(en.getKey(), en.getValue());
+			if(applyRequestAttr){
+				req.setAttribute(en.getKey(), en.getValue());
+			}
+			innerViewModelMap.put(en.getKey(), en.getValue());
 		}
 		
 		if(bindArgs!=null){
 			for(Map.Entry<String, Object> en:bindArgs.entrySet()){
-				req.setAttribute(en.getKey(), en.getValue());
+				if(applyRequestAttr){
+					req.setAttribute(en.getKey(), en.getValue());
+				}
+				innerViewModelMap.put(en.getKey(), en.getValue());
 			}
 		}
+		
+		ViewModelMap.instance().setInternalMap(innerViewModelMap);
+		
+		
 		try{
 			CommandContext mvcctx = CommandContext.init();
 			mvcctx.setCommandName(command);
@@ -166,10 +181,14 @@ public class SpringMVCViewModel implements Map<String, Object>{
 			CommandContext.clean();
 		}
 
+		if(res.getError()!=-1){
+			throw new RuntimeException("command request "+commandPath+" error, error code="+res.getError()+",message="+res.getErrorMessage());
+		}
 		
+		System.out.println(">>>"+res.getError());
 		Map<String, ?> model = (Map<String, ?>)req.getPayload(CommandRequest.PAYLOAD_MODEL_MAP);
 		if(model==null){
-			throw new RuntimeException("model map not found for command "+command+" in path "+basePath);
+			throw new RuntimeException("model map not found for command path "+commandPath+", error ");
 		}
 		
 		for(String nm:model.keySet()){

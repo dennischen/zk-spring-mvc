@@ -21,7 +21,6 @@ public class PersonDAO {
 	}
 	
 	public PersonDAO(){
-		System.out.println("PersonDAO>>>>"+this);
 	}
 	
 	public void save(Person person){

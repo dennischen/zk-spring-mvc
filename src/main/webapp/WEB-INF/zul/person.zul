@@ -46,6 +46,7 @@
 				<button label="redirect" onClick="@command('redirect',path='/welcome')"/>
 				<button label="redirect2" onClick="@command('redirect',path='/welcome/dennis')"/>
 				<button label="popup" onClick="@command('popup',zul='personinfo.zul')"/>
+				<button label="error" onClick="@command('error')"/>
 			</toolbar>
 		</vlayout>
 	</window>
