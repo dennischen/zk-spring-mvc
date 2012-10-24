@@ -18,7 +18,7 @@
 			</rows>
 		</grid>
 		<toolbar>
-			<button label="Close" onClick="@command('detachComponent',component=win)"/>
+			<button label="Close" onClick="@command(win.detach())"/>
 		</toolbar>
 	</window>
 </zk>

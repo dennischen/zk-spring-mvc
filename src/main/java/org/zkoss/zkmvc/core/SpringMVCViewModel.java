@@ -16,6 +16,7 @@ import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.ContextParam;
 import org.zkoss.bind.annotation.ContextType;
+import org.zkoss.bind.annotation.DefaultCommand;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.impl.BindContextImpl;
 import org.zkoss.zk.ui.Component;
@@ -110,13 +111,8 @@ public class SpringMVCViewModel implements Map<String, Object>{
 		throw new UnsupportedOperationException();
 	}
 	
-	/** utility method */
-	@Command
-	public void detachComponent(@BindingParam("component")Component comp) throws Exception {
-		comp.detach();
-	}
 	
-	@Command("*")
+	@DefaultCommand
 	public void invokeCommand(@ContextParam(ContextType.BIND_CONTEXT) BindContext ctx) throws Exception {
 		final String command = ctx.getCommandName();
 		

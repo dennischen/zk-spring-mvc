@@ -16,7 +16,7 @@
 					</listitem>
 				</template>
 			</listbox>
-			<div height="70px">
+			<div height="100px">
 				<grid visible="@bind(not empty ctrl.selectedPerson)"
 					form="@id('fx') @load(ctrl.selectedPerson) @save(ctrl.selectedPerson,before='save')">
 					<columns>
@@ -33,6 +33,11 @@
 							Last Name:
 							<textbox
 								value="@bind(fx.lastName)" />
+						</row>
+						<row>
+							Address :
+							<textbox
+								value="@bind(fx.address.city)" />
 						</row>
 					</rows>
 				</grid>

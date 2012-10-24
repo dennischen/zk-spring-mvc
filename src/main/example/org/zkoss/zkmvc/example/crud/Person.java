@@ -5,6 +5,8 @@ public class Person {
 	String firstName;
 
 	String lastName;
+	
+	Address address = new Address();
 
 	public Person(String firstName, String lastName) {
 		this.firstName = firstName;
@@ -27,4 +29,8 @@ public class Person {
 		this.lastName = lastName;
 	}
 
+	public Address getAddress() {
+		return address;
+	}
+	
 }
